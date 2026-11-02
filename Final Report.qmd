@@ -49,15 +49,18 @@ n_obs   <- nrow(data)
 # Introduction {#sec-intro}
 
 Election polls have a vital role in examining voter preferences and influencing expectations about electoral results. However, their stated precision does not automatically guarantee accuracy. In the Journal of the American Statistical Association, @shiranimehr2018 discovered that observed polling errors were around double the implied conventional margins of error, emphasising that polling uncertainty extends beyond random sampling variability. This prompts a question about whether polling characteristics can explain differences in the accuracy of polls.
-The 2012 and 2016 US presidential elections offer a valuable basis for exploring this question. Particularly, state-level polling in the election year 2016 demonstrated substantial errors, with @kennedy2018 noting a mean absolute error of 5.1 percentage points. The journal article states that late swings in voter preferences and insufficient adjustments for educational attainment were key factors that led to such errors. These findings further motivate an examination into whether polling timing, sample size, and survey methodology are associated with the accuracy of polling results.
-Hence, this report investigates the research question: To what degree are polling timing, sample size and methodology associated with the accuracy of state-level presidential polls for the 2012 and 2016 elections. More specifically, it explores:
-1.        Whether polling accuracy is associated with days prior to Election Day
-2.        Whether election year, sample size and methodology explain variation in polling errors once timing is accounted for
-3.        Whether relationship between polling timing and error is different across the two election years
+
+The 2012 and 2016 US presidential elections offer a valuable basis for exploring this question. Particularly, state-level polling in the election year 2016 demonstrated substantial errors, with @kennedy2018 noting a mean absolute error of 5.1 percentage points. The journal article states that late swings in voter preferences and insufficient adjustments for educational attainment were key factors that led to such errors.
+
+These findings further motivate an examination into whether polling timing, sample size, and survey methodology are associated with the accuracy of polling results. Hence, this report investigates the research question: **To what degree are polling timing, sample size and methodology associated with the accuracy of state-level presidential polls for the 2012 and 2016 elections.** More specifically, it explores:
+
+1\. Whether polling accuracy is associated with days prior to Election Day
+
+2\. Whether election year, sample size and methodology explain variation in polling errors once timing is accounted for
+
+3\. Whether relationship between polling timing and error is different across the two election years
+
 Polling accuracy is measured as the absolute error between polling and actual Democratic-Republican voting margins. Multiple linear regression models are utilised as a means to explore these relationships.
-
-
-State the research question clearly and motivate why it matters, ideally with reference to existing literature [@wickham2023]. For example: *we ask whether a vehicle's weight is associated with its fuel economy, and how strong that association is after accounting for engine power.*
 
 # Method {#sec-method}
 
