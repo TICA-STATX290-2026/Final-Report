@@ -1,8 +1,11 @@
 ---
 title: "A clear, specific title stating what you investigated"
 author:
-  - "Student One (a1111111)"
-  - "Student Two (a2222222)"
+  - "Tia Light (a1971078)"
+  - "Tue Linh Tran (a1983221)"
+  - "Xuan Zhu (a1887954)"
+  - "Amey Chande (a1850125)" 
+  
 date: today
 abstract: |
   Executive summary. 4–6 sentences, written for a non-specialist. State the
