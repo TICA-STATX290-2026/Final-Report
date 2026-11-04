@@ -1,5 +1,4 @@
-```{r}
-
+## ---- final-data-preparation ----
 library(readr)
 library(tidyverse)
 library(dplyr)
@@ -120,4 +119,6 @@ margin_elections <- elections |>
       days_mean = mean(days_prior), 
       sample_mean = mean(sample_size))
   
-```
+  # Save dataset for regressional analysis in data folder 
+  write_csv(final_model_data, "data/final_model_data.csv")
+  
