@@ -73,39 +73,43 @@ Polling accuracy is measured as the absolute error between polling and actual De
 
 ## Data
 
-Describe the data accurately: its source, the unit of observation, the variables
-used, and any cleaning or exclusions. The example uses the built-in `mtcars`
-data [@rcore], covering `r n_obs` vehicles. Summarise the key variables as in
-@tbl-descriptives.
+This report utilises state-level presidential polling data from the US election years 2012 and 2016. This data was retrieved from HuffPost Pollster via the pollstR R package on 10 January 2017 as part of the rOpenGov project. Official election results were obtained from the MIT Election Data and Science Lab’s US President 1976-2024 dataset, accessed via the Harvard Dataverse. Following the data preparation, the unit of observation in the final dataset is an individual state-level poll, which can be identified using election year, state and poll ID.
+Initial data cleaning and standardisation was completed previously in the Exploratory Data Analysis Report. These datasets can be found in the data folder within the GitHub Repository (add in link). For the following analysis, party candidate support percentages for Democratic and Republican were combined into a single observation per poll. Polling margins were measured as the difference between Republican and Democratic support (Democratic – Republican). A similar calculation was used for actual election outcomes, with electoral margins being measured using each party’s share of total state votes. Polls were matched to election observations based on state and year.
+The response variable, absolute polling error, calculates the absolute difference between polling and election margins in terms of percentage points. Explanatory variables to be used include:
+·      days_prior: the number of days between poll’s end date and the relevant Election Day
+·      sample_size_log: the logarithm of the sample size for the poll
+·      mode: polling methodology (Live Phone, Internet, Mixed...)
+·      year: election year – either 2012 or 2016
+As noted, sample size was logarithmically transformed given there may be a potentially nonlinear relationship with polling error. Any observations that were incomplete or had invalid values for the variables required for regression modelling were excluded, enabling consistent samples across all models.
+The final dataset consists of  `r n_obs` observations. The descriptive statistics for this dataset is displayed in @tbl-descriptives. The additional data cleaning and preparation is fully documented in @sec-appendix.
 
-```{r}
-#| label: tbl-descriptives
-#| tbl-cap: "Summary of the variables used in the analysis."
+ data |>
+    summarise(
+      across(c(abs_error, days_prior, sample_size),
+             list(mean = mean, sd = sd, median = median),
+             .names = "{.col}_{.fn}")
+    ) |>
+    pivot_longer(everything(),
+                 names_to = c("Variable", ".value"),
+                 names_sep = "_(?=[^_]+$)") |>
+    kable(digits = 2, col.names = c("Variable", "Mean", "SD", "Median"))
+
 data |>
-  summarise(
-    across(c(mpg, wt, hp),
-           list(mean = mean, sd = sd),
-           .names = "{.col}_{.fn}")
-  ) |>
-  pivot_longer(everything(),
-               names_to = c("Variable", ".value"),
-               names_sep = "_") |>
-  kable(digits = 2, col.names = c("Variable", "Mean", "SD"))
+    count(year, mode) |> 
+    group_by(year) |> 
+    mutate(percent = 100*n/sum(n)) |> 
+    ungroup() |> 
+    kable(digits = 1, col.names = c("Election year", "Mode", "No. of polls", "Percent (%)"))
+
 ```
 
 ## Statistical methods
 
-Describe and justify the statistical methods in the context of the question
-here, a multiple linear regression of fuel economy on weight and power. State
-the model and the assumptions you will check (linearity, constant variance,
-normal residuals); the checks themselves go in @sec-appendix.
+Multiple linear regressions using ordinary least squares was utilised to explore associations between polling characteristics and absolute polling error. The use of this method allowed for the relationship between polling timing and error to be examined, while accounting for other explanatory variables.
+A total of five nested regression models were constructed to address the central research question. Model 1 investigates the association between polling time and absolute error. Model 2 includes an additional explanatory variable for year to account for differences between 2012 and 2016 elections. Model 3 adds log-transformed sample size, and Model 4 further includes polling mode to investigate methodological differences once adjusting for other variables. Finally, Model 5 implements an interaction between the timing and year terms to examine whether the relationship between timing and error differs across elections. This final model considers absolute polling error as a function of timing, election year, sample size, mode, and an interaction between timing and year. 
+In these models, election year and polling mode were treated as categorical variables, with 2012 and (…) mode as the respective reference categories. The coefficients of the models were interpreted as changes in expected absolute polling error (in percentage points), accounting for other predictors included in the given model.
+Model assumptions including linearity, constant variance, and residual normality were assessed through residual versus fitted and normal Q-Q plots. Additionally, influential observations were also investigated using standard regression diagnostics. Potential dependence between polls from the same state or pollster was considered a possible limitation of the assumption of independence. Given that absolute errors are non-negative and possibly right-skewed, assumption checking is especially relevant. The analysis remains observational, meaning any relationships should not be considered as causal. Detailed model specifications, diagnostics, and R code is fully documented and can be found in @sec-appendix.
 
-
-# Statistical appendix {#sec-appendix}
-
-<!-- See rubric: Statistical appendix - fully reproducible, annotated analysis. -->
-
-This appendix documents the analysis so the results above are fully reproducible. The annotated code reproduces the model and its assumption checks; the complete project (data, scripts, and commit history) is in the repository linked at the top.
 
 ## Data preparation 
 
