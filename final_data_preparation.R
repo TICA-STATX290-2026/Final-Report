@@ -80,8 +80,13 @@ margin_elections <- elections |>
                                      NA_real_)) |> 
     # Election year to be treated as a cateogorical variable for modelling purposes 
     mutate(year = factor(year)) |> 
-    # Polling mode to be treated as a categorical variable for modelling purposes 
-    mutate(mode = factor(mode)) 
+    # Polling mode to be condensed into 3 categories and be treated as categorical variable
+    mutate(mode = case_when(mode %in% c("Automated Phone", "Live Phone", 
+                                        "IVR/Live Phone") ~ "Phone",
+          mode == "Internet" ~ "Internet", 
+          TRUE ~ "Mixed / Other"),
+          mode = factor(mode, levels = c("Phone", "Internet", "Mixed / Other"))) 
+    
   
   # Check model dataset 
   # Check: all polls have distinct state-year-poll ID 
