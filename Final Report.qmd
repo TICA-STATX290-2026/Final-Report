@@ -29,22 +29,27 @@ editor: source
 
 ```{r}
 #| label: setup
-#| include: false 
+#| include: false
 
 # Load packages
 library(tidyverse)
 library(modelsummary)
 library(knitr)
 
-data <- read_csv("data/final_model_data.csv") %>% 
-  mutate(year = factor(year), mode = factor(mode, levels = c("Phone", "Internet", 
-                                                             "Mixed / Other")))
+data <- read_csv("data/final_model_data.csv") |>
+  mutate(year = factor(year), mode = factor(mode, levels = c(
+    "Phone", "Internet",
+    "Mixed / Other"
+  )))
 
-# Regression models that explore how polling characteristics are associated to error
+# Regression models that explore how polling characteristics are associated
+# to error
 model_1 <- lm(abs_error ~ days_prior, data = data)
 model_2 <- lm(abs_error ~ days_prior + year, data = data)
 model_3 <- lm(abs_error ~ days_prior + year + sample_size_log, data = data)
-model_4 <- lm(abs_error ~ days_prior + year + sample_size_log + mode, data = data)
+model_4 <- lm(abs_error ~ days_prior + year + sample_size_log + mode,
+  data = data
+)
 
 # Pull values out so they can be reported inline (never hard-type a number)
 timing_beta <- coef(model_1)[["days_prior"]]
@@ -60,7 +65,7 @@ internet_beta <- coef(model_4)[["modeInternet"]]
 mixed_beta <- coef(model_4)[["modeMixed / Other"]]
 r2_m4 <- summary(model_4)$r.squared
 
-n_obs   <- nrow(data)
+n_obs <- nrow(data)
 ```
 
 # Introduction {#sec-intro}
@@ -103,24 +108,28 @@ Any observations that were incomplete or had invalid values for the variables re
 #| label: tbl-descriptives
 #| tbl-cap: "Descriptive statistics of numerical variables"
 
- data |>
-    summarise(
-      across(c(abs_error, days_prior, sample_size),
-             list(mean = mean, sd = sd, median = median),
-             .names = "{.col}_{.fn}")
-    ) |>
-    pivot_longer(everything(),
-                 names_to = c("Variable", ".value"),
-                 names_sep = "_(?=[^_]+$)") |>
-    kable(digits = 2, col.names = c("Variable", "Mean", "SD", "Median"))
+data |>
+  summarise(
+    across(c(abs_error, days_prior, sample_size),
+      list(mean = mean, sd = sd, median = median),
+      .names = "{.col}_{.fn}"
+    )
+  ) |>
+  pivot_longer(everything(),
+    names_to = c("Variable", ".value"),
+    names_sep = "_(?=[^_]+$)"
+  ) |>
+  kable(digits = 2, col.names = c("Variable", "Mean", "SD", "Median"))
 
 data |>
-    count(year, mode) |> 
-    group_by(year) |> 
-    mutate(percent = 100*n/sum(n)) |> 
-    ungroup() |> 
-    kable(digits = 1, col.names = c("Election year", "Mode", "No. of polls", "Percent (%)"))
-
+  count(year, mode) |>
+  group_by(year) |>
+  mutate(percent = 100 * n / sum(n)) |>
+  ungroup() |>
+  kable(digits = 1, col.names = c(
+    "Election year", "Mode",
+    "No. of polls", "Percent (%)"
+  ))
 ```
 
 ## Statistical methods
@@ -139,32 +148,48 @@ As displayed in @fig-timing, absolute polling error tends to increase with great
 
 ```{r}
 #| label: fig-timing
-#| fig-cap: "Absolute polling error in Democratic-Republican vote margins (pp) against number of days the poll was conducted prior to the 2012 and 2016 elections. Each point indicates an individual poll, with grey representing election year 2012, and navy indicating 2016. Solid lines are fitted linear trends using OLS for each election year, and shaded bands represent 95% confidence interval. Figure suggests that polls conducted further from the election date tend to have larger errors, while errors are mostly greater in 2016. The model doesn't account for sample size and polling mode, and larger errors could possibly indicate changes in voter preferences nearing election day."
+#| fig-cap: "Absolute polling error in Democratic-Republican vote margins (pp)
+#| against number of days the poll was conducted prior to the 2012 and 2016
+#| elections. Each point indicates an individual poll, with grey representing
+#| election year 2012, and navy indicating 2016. Solid lines are fitted linear
+#| trends using OLS for each election year, and shaded bands represent 95%
+#| confidence interval. Figure suggests that polls conducted further from the
+#| election date tend to have larger errors, while errors are mostly greater in
+#| 2016. The model doesn't account for sample size and polling mode, and
+#| larger errors could possibly indicate changes in voter preferences nearing
+#| election day."
 #| fig-width: 7
 #| fig-height: 4
 ggplot(data, aes(x = days_prior, y = abs_error, colour = year)) +
-  geom_jitter(width = 4, alpha = 0.2, size = 0.7) + 
-geom_smooth(method = "lm", formula = y ~ x) +
-  scale_colour_manual(values = c("2012" = "#4D4D4D", "2016" = "#21618C")) + 
-labs(x = "Days prior to election", y = "Absolute polling error (pp)", 
-     colour = "Election Year") +
-theme_minimal()
+  geom_jitter(width = 4, alpha = 0.2, size = 0.7) +
+  geom_smooth(method = "lm", formula = y ~ x) +
+  scale_colour_manual(values = c("2012" = "#4D4D4D", "2016" = "#21618C")) +
+  labs(
+    x = "Days prior to election", y = "Absolute polling error (pp)",
+    colour = "Election Year"
+  ) +
+  theme_minimal()
 ```
 
 ```{r}
 #| label: tbl-model
-#| tbl-cap: "Multiple linear regression exploring association between polling characteristics and absolute polling error for 2012 and 2016 US presidential elections."
+#| tbl-cap: "Multiple linear regression exploring association between polling
+#| characteristics and absolute polling error for 2012 and 2016 US
+#| presidential elections."
 # modelsummary's default `tinytable` backend renders cleanly to PDF.
 
 modelsummary(
-  list("Model 1" = model_1, "Model 2" = model_2, "Model 3" = model_3, 
-       "Model 4" = model_4),
-  coef_map = c("(Intercept)" = "Intercept", 
-                "days_prior" = "Days before Election", 
-                "year2016" = "2016 election (vs 2012)", 
-                "sample_size_log" = "Log sample size", 
-                "modeInternet" = "Internet (vs Phone)", 
-                "modeMixed / Other" = "Mixed/Other (vs Phone)"
+  list(
+    "Model 1" = model_1, "Model 2" = model_2, "Model 3" = model_3,
+    "Model 4" = model_4
+  ),
+  coef_map = c(
+    "(Intercept)" = "Intercept",
+    "days_prior" = "Days before Election",
+    "year2016" = "2016 election (vs 2012)",
+    "sample_size_log" = "Log sample size",
+    "modeInternet" = "Internet (vs Phone)",
+    "modeMixed / Other" = "Mixed/Other (vs Phone)"
   ),
   gof_map = c("nobs", "r.squared", "adj.r.squared"),
   stars = TRUE
@@ -184,134 +209,148 @@ Overall, polling timing, election year, and sample size indicated statistically 
 ## Data preparation
 
 ```{r}
-#| label: appendix-data-preparation 
-#| echo: true 
-#| eval: false 
+#| label: appendix-data-preparation
+#| echo: true
+#| eval: false
 
 library(readr)
 library(tidyverse)
 library(dplyr)
 
-# Read cleaned datasets from EDA report 
+# Read cleaned datasets from EDA report
 elections <- read_csv("data/1976-2024-president-clean.csv")
 polls_2012 <- read_csv("data/state_polls_2012_clean.csv")
 polls_2016 <- read_csv("data/state_polls_2016_clean.csv")
 
 
-# Prepare 2012 polling data 
-# Convert observations into one row per poll 
+# Prepare 2012 polling data
+# Convert observations into one row per poll
 polls_2012_wide <- polls_2012 |>
-  filter(candidate %in% c("Obama", "Romney")) |> 
+  filter(candidate %in% c("Obama", "Romney")) |>
   pivot_wider(names_from = candidate, values_from = support) |>
-# New column with election year 
-  mutate(year = 2012) |> 
-# New column with poll margin (Dem - Rep)
+  # New column with election year
+  mutate(year = 2012) |>
+  # New column with poll margin (Dem - Rep)
   mutate(margin_poll = Obama - Romney)
 
-# Prepare 2016 polling data 
-# Convert observations into one row per poll 
+# Prepare 2016 polling data
+# Convert observations into one row per poll
 polls_2016_wide <- polls_2016 |>
-  filter(candidate %in% c("Clinton", "Trump")) |> 
+  filter(candidate %in% c("Clinton", "Trump")) |>
   pivot_wider(names_from = candidate, values_from = support) |>
-# New column with election year 
-  mutate(year = 2016) |> 
-# New column with poll margin (Dem - Rep)
+  # New column with election year
+  mutate(year = 2016) |>
+  # New column with poll margin (Dem - Rep)
   mutate(margin_poll = Clinton - Trump)
 
-# Combine both election year polling data 
-polls_2012_2016 <- bind_rows(polls_2012_wide, polls_2016_wide) |> 
-  # Keep columns necessary for modelling 
+# Combine both election year polling data
+polls_2012_2016 <- bind_rows(polls_2012_wide, polls_2016_wide) |>
+  # Keep columns necessary for modelling
   select(year, state, poll_id, pollster, end_date, start_date, mode, sample_size, margin_poll)
 
-# Check number of polls for each year after combining datasets 
-polls_2012_2016 |> 
-  count(year) 
+# Check number of polls for each year after combining datasets
+polls_2012_2016 |>
+  count(year)
 
-# Prepare election results 
-# Keep election results for only 2012 and 2016, Dem and Rep parties 
-margin_elections <- elections |> 
-  filter(year %in% c(2012, 2016)) |> 
-  # Sum votes across all Rep candidate records and then across all Dem candidate records 
-  group_by(year, state) |> 
+# Prepare election results
+# Keep election results for only 2012 and 2016, Dem and Rep parties
+margin_elections <- elections |>
+  filter(year %in% c(2012, 2016)) |>
+  # Sum votes across all Rep candidate records and then across all Dem candidate records
+  group_by(year, state) |>
   summarise(
-    votes_rep = sum(candidatevotes[party_simplified == "REPUBLICAN"], 
-    na.rm = TRUE), 
-    votes_dem = sum(candidatevotes[party_simplified == "DEMOCRAT"], 
-    na.rm = TRUE), 
-  # Count total votes in each state for each election year 
-  votes_total = first(totalvotes), 
-  .groups = "drop") |> 
-    # Calculate election Dem-Rep vote margin as percentage points 
-    mutate(margin_actual = 100*(votes_dem - votes_rep)/votes_total) 
-  
-  # Create one dataset containing poll and election results 
-  # Join polling votes with election outcomes 
-  polls_and_elections <- polls_2012_2016 |>
-    left_join(margin_elections |> select(year, state, margin_actual),
-              by = c("year", "state"))
-  # Check if any polls had no matching election results 
-  sum(is.na(polls_and_elections$margin_actual))
-    
-# Prepare regression variables for models 
-  model_data <- polls_and_elections |> 
-    # Convert polling start and end dates into Date format 
-    mutate(start_date = as.Date(start_date), 
-           end_date = as.Date(end_date)) |> 
-    # Add column for election date for the corresponding year 
-    mutate(election_date = as.Date(if_else(year == 2016, "2016-11-08", "2012-11-06"))) |> 
-    # Create column with number of days between poll and election 
-    mutate(days_prior = as.numeric(as.numeric(election_date - end_date))) |> 
-    # Create column with absolute polling error 
-    mutate(abs_error = abs(margin_poll - margin_actual)) |> 
-    # Create column to calculate logarithm of sample size 
-    mutate(sample_size_log = if_else(sample_size > 0 & !is.na(sample_size),
-                                     log(sample_size), 
-                                     NA_real_)) |> 
-    # Election year to be treated as a cateogorical variable for modelling purposes 
-    mutate(year = factor(year)) |> 
-    # Polling mode to be condensed into 3 categories and be treated as categorical variable
-    mutate(mode = case_when(mode %in% c("Automated Phone", "Live Phone", 
-                                        "IVR/Live Phone") ~ "Phone",
-          mode == "Internet" ~ "Internet", 
-          TRUE ~ "Mixed / Other"),
-          mode = factor(mode, levels = c("Phone", "Internet", "Mixed / Other"))) 
-  
-  # Check model dataset 
-  # Check: all polls have distinct state-year-poll ID 
-  stopifnot(!anyDuplicated(model_data[c("year", "state", "poll_id")]))
-  # Check: all polls occur before Election day 
-  stopifnot(all(model_data$days_prior >= 0, na.rm = TRUE))
-  # Check: missing values in variables 
-  model_data |> 
-    summarise(
-      error_miss = sum(is.na(abs_error)), 
-      year_miss = sum(is.na(year)), 
-      mode_miss = sum(is.na(mode)), 
-      sample_miss = sum(is.na(sample_size_log)), 
-      days_miss = sum(is.na(days_prior))
-    )
-  # Understand distribution of polling modes 
-  model_data |> 
-    count(year, mode)
-  
-  # Construct final dataset for models 
-  # Keep observations with no missing values (remove observations with missing sample size)
-  final_model_data <- model_data |> 
-    filter(!is.na(sample_size_log))
-  # Check final number of polls for each year
-  final_model_data |> 
-    count(year)
-  # Glimpse of final model dataset 
-  glimpse(final_model_data)
-  # Summary of means for main numerical variables 
-  final_model_data |> 
-    summarise(
-      n = n(), 
-      err_mean = mean(abs_error), 
-      err_median = median(abs_error), 
-      days_mean = mean(days_prior), 
-      sample_mean = mean(sample_size))
-      
-  # Save dataset for regressional analysis in data folder 
-  write_csv(final_model_data, "data/final_model_data.csv")
+    votes_rep = sum(candidatevotes[party_simplified == "REPUBLICAN"],
+      na.rm = TRUE
+    ),
+    votes_dem = sum(candidatevotes[party_simplified == "DEMOCRAT"],
+      na.rm = TRUE
+    ),
+    # Count total votes in each state for each election year
+    votes_total = first(totalvotes),
+    .groups = "drop"
+  ) |>
+  # Calculate election Dem-Rep vote margin as percentage points
+  mutate(margin_actual = 100 * (votes_dem - votes_rep) / votes_total)
+
+# Create one dataset containing poll and election results
+# Join polling votes with election outcomes
+polls_and_elections <- polls_2012_2016 |>
+  left_join(margin_elections |> select(year, state, margin_actual),
+    by = c("year", "state")
+  )
+# Check if any polls had no matching election results
+sum(is.na(polls_and_elections$margin_actual))
+
+# Prepare regression variables for models
+model_data <- polls_and_elections |>
+  # Convert polling start and end dates into Date format
+  mutate(
+    start_date = as.Date(start_date),
+    end_date = as.Date(end_date)
+  ) |>
+  # Add column for election date for the corresponding year
+  mutate(election_date = as.Date(if_else(year == 2016, "2016-11-08", "2012-11-06"))) |>
+  # Create column with number of days between poll and election
+  mutate(days_prior = as.numeric(as.numeric(election_date - end_date))) |>
+  # Create column with absolute polling error
+  mutate(abs_error = abs(margin_poll - margin_actual)) |>
+  # Create column to calculate logarithm of sample size
+  mutate(sample_size_log = if_else(sample_size > 0 & !is.na(sample_size),
+    log(sample_size),
+    NA_real_
+  )) |>
+  # Election year to be treated as a cateogorical variable for modelling purposes
+  mutate(year = factor(year)) |>
+  # Polling mode to be condensed into 3 categories and be treated as categorical variable
+  mutate(
+    mode = case_when(
+      mode %in% c(
+        "Automated Phone", "Live Phone",
+        "IVR/Live Phone"
+      ) ~ "Phone",
+      mode == "Internet" ~ "Internet",
+      TRUE ~ "Mixed / Other"
+    ),
+    mode = factor(mode, levels = c("Phone", "Internet", "Mixed / Other"))
+  )
+
+# Check model dataset
+# Check: all polls have distinct state-year-poll ID
+stopifnot(!anyDuplicated(model_data[c("year", "state", "poll_id")]))
+# Check: all polls occur before Election day
+stopifnot(all(model_data$days_prior >= 0, na.rm = TRUE))
+# Check: missing values in variables
+model_data |>
+  summarise(
+    error_miss = sum(is.na(abs_error)),
+    year_miss = sum(is.na(year)),
+    mode_miss = sum(is.na(mode)),
+    sample_miss = sum(is.na(sample_size_log)),
+    days_miss = sum(is.na(days_prior))
+  )
+# Understand distribution of polling modes
+model_data |>
+  count(year, mode)
+
+# Construct final dataset for models
+# Keep observations with no missing values (remove observations with missing sample size)
+final_model_data <- model_data |>
+  filter(!is.na(sample_size_log))
+# Check final number of polls for each year
+final_model_data |>
+  count(year)
+# Glimpse of final model dataset
+glimpse(final_model_data)
+# Summary of means for main numerical variables
+final_model_data |>
+  summarise(
+    n = n(),
+    err_mean = mean(abs_error),
+    err_median = median(abs_error),
+    days_mean = mean(days_prior),
+    sample_mean = mean(sample_size)
+  )
+
+# Save dataset for regressional analysis in data folder
+write_csv(final_model_data, "data/final_model_data.csv")
 ```
