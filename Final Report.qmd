@@ -36,17 +36,30 @@ library(tidyverse)
 library(modelsummary)
 library(knitr)
 
-# --- Replace this block with loading YOUR data ---------------
-
 data <- read_csv("data/final_model_data.csv") %>% 
-  mutate(year = factor(year), mode = factor(mode))
+  mutate(year = factor(year), mode = factor(mode, levels = c("Phone", "Internet", 
+                                                             "Mixed / Other")))
 
-# # Example analysis: does a car's weight predict its fuel economy?
-# model <- lm(mpg ~ wt + hp, data = data)
+# Regression models that explore how polling characteristics are associated to error
+model_1 <- lm(abs_error ~ days_prior, data = data)
+model_2 <- lm(abs_error ~ days_prior + year, data = data)
+model_3 <- lm(abs_error ~ days_prior + year + sample_size_log, data = data)
+model_4 <- lm(abs_error ~ days_prior + year + sample_size_log + mode, data = data)
 
 # Pull values out so they can be reported inline (never hard-type a number)
-# r2      <- summary(model)$r.squared
-# wt_beta <- coef(model)[["wt"]]
+timing_beta <- coef(model_1)[["days_prior"]]
+r2_m1 <- summary(model_1)$r.squared
+
+year_beta <- coef(model_2)[["year2016"]]
+r2_m2 <- summary(model_2)$r.squared
+
+size_beta <- coef(model_3)[["sample_size_log"]]
+r2_m3 <- summary(model_3)$r.squared
+
+internet_beta <- coef(model_4)[["modeInternet"]]
+mixed_beta <- coef(model_4)[["modeMixed / Other"]]
+r2_m4 <- summary(model_4)$r.squared
+
 n_obs   <- nrow(data)
 ```
 
@@ -61,8 +74,6 @@ These findings further motivate an examination into whether polling timing, samp
 1\. Whether polling accuracy is associated with days prior to Election Day
 
 2\. Whether election year, sample size and methodology explain variation in polling errors once timing is accounted for
-
-3\. Whether relationship between polling timing and error is different across the two election years
 
 Polling accuracy is measured as the absolute error between polling and actual Democratic-Republican voting margins. Multiple linear regression models are utilised as a means to explore these relationships.
 
@@ -80,11 +91,13 @@ The response variable, absolute polling error, calculates the absolute differenc
 
 -   sample_size_log: the logarithm of the sample size for the poll
 
--   mode: polling methodology (Live Phone, Internet, Mixed...)
+-   mode: polling methodology (Phone, Internet and Mixed/Other)
 
 -   year: election year – either 2012 or 2016
 
-    As noted, sample size was logarithmically transformed given there may be a potentially nonlinear relationship with polling error. Any observations that were incomplete or had invalid values for the variables required for regression modelling were excluded, enabling consistent samples across all models. The final dataset consists of `r n_obs` observations. The descriptive statistics for this dataset is displayed in @tbl-descriptives. The additional data cleaning and preparation is fully documented in @sec-appendix.
+As noted, sample size was logarithmically transformed given there may be a potentially nonlinear relationship with polling error. Additionally, the mode variable was consolidated from 8 categories into 3 groups: Phone, Internet and Mixed/Other. This consolidated reduced the number of different categories with minimal observations, enabling a more effective comparison between polling modes. 
+    
+Any observations that were incomplete or had invalid values for the variables required for regression modelling were excluded, enabling consistent samples across all models. The final dataset consists of `r n_obs` observations. The descriptive statistics for this dataset is displayed in @tbl-descriptives. The additional data cleaning and preparation is fully documented in @sec-appendix.
 
 ```{r}
 #| label: tbl-descriptives
@@ -114,11 +127,57 @@ data |>
 
 Multiple linear regressions using ordinary least squares was utilised to explore associations between polling characteristics and absolute polling error. The use of this method allowed for the relationship between polling timing and error to be examined, while accounting for other explanatory variables.
 
-A total of five nested regression models were constructed to address the central research question. Model 1 investigates the association between polling time and absolute error. Model 2 includes an additional explanatory variable for year to account for differences between 2012 and 2016 elections. Model 3 adds log-transformed sample size, and Model 4 further includes polling mode to investigate methodological differences once adjusting for other variables. Finally, Model 5 implements an interaction between the timing and year terms to examine whether the relationship between timing and error differs across elections. This final model considers absolute polling error as a function of timing, election year, sample size, mode, and an interaction between timing and year.
+A total of four nested regression models were constructed to address the central research question. Model 1 investigates the association between polling time and absolute error. Model 2 includes an additional explanatory variable for year to account for differences between 2012 and 2016 elections. Model 3 adds log-transformed sample size, and Model 4 further includes polling mode to investigate methodological differences once adjusting for other variables. This final model considers absolute polling error as a function of timing, election year, sample size and mode.
 
-In these models, election year and polling mode were treated as categorical variables, with 2012 and (…) mode as the respective reference categories. The coefficients of the models were interpreted as changes in expected absolute polling error (in percentage points), accounting for other predictors included in the given model.
+In these models, election year and polling mode were treated as categorical variables, with 2012 and Phone as the respective reference categories. The coefficients of the models were interpreted as changes in expected absolute polling error (in percentage points), accounting for other predictors included in the given model.
 
 Model assumptions including linearity, constant variance, and residual normality were assessed through residual versus fitted and normal Q-Q plots. Additionally, influential observations were also investigated using standard regression diagnostics. Potential dependence between polls from the same state or pollster was considered a possible limitation of the assumption of independence. Given that absolute errors are non-negative and possibly right-skewed, assumption checking is especially relevant. The analysis remains observational, meaning any relationships should not be considered as causal. Detailed model specifications, diagnostics, and R code is fully documented and can be found in @sec-appendix.
+
+# Results {#sec-results}
+
+As displayed in @fig-timing, absolute polling error tends to increase with greater number of days remaining before Election Day. This suggests that polls carried out earlier appear to deviate more from the actual election results. The 2016 polls also indicate greater errors compared to 2012, but there is moderate variation for both election years. These preliminary relationships are further investigated in a formal manner using multiple linear regression, with estimated models showcased in @tbl-model. 
+
+```{r}
+#| label: fig-timing
+#| fig-cap: "Absolute polling error in Democratic-Republican vote margins (pp) against number of days the poll was conducted prior to the 2012 and 2016 elections. Each point indicates an individual poll, with grey representing election year 2012, and navy indicating 2016. Solid lines are fitted linear trends using OLS for each election year, and shaded bands represent 95% confidence interval. Figure suggests that polls conducted further from the election date tend to have larger errors, while errors are mostly greater in 2016. The model doesn't account for sample size and polling mode, and larger errors could possibly indicate changes in voter preferences nearing election day."
+#| fig-width: 7
+#| fig-height: 4
+ggplot(data, aes(x = days_prior, y = abs_error, colour = year)) +
+  geom_jitter(width = 4, alpha = 0.2, size = 0.7) + 
+geom_smooth(method = "lm", formula = y ~ x) +
+  scale_colour_manual(values = c("2012" = "#4D4D4D", "2016" = "#21618C")) + 
+labs(x = "Days prior to election", y = "Absolute polling error (pp)", 
+     colour = "Election Year") +
+theme_minimal()
+```
+
+```{r}
+#| label: tbl-model
+#| tbl-cap: "Multiple linear regression exploring association between polling characteristics and absolute polling error for 2012 and 2016 US presidential elections."
+# modelsummary's default `tinytable` backend renders cleanly to PDF.
+
+modelsummary(
+  list("Model 1" = model_1, "Model 2" = model_2, "Model 3" = model_3, 
+       "Model 4" = model_4),
+  coef_map = c("(Intercept)" = "Intercept", 
+                "days_prior" = "Days before Election", 
+                "year2016" = "2016 election (vs 2012)", 
+                "sample_size_log" = "Log sample size", 
+                "modeInternet" = "Internet (vs Phone)", 
+                "modeMixed / Other" = "Mixed/Other (vs Phone)"
+  ),
+  gof_map = c("nobs", "r.squared", "adj.r.squared"),
+  stars = TRUE
+)
+```
+
+The regression estimates displayed in @tbl-model offer further evidence of an association between polling timing and absolute polling error. In Model 1, each additional day before the elections is associated with a `r round(timing_beta, 3)` percentage point (`r round(timing_beta, 3)`%) increase in absolute error. Over 100 days, this corresponds to an increase of around `r round(100*timing_beta, 3)` percentage points. Across all four models, the relationship between poll timing and error remains positive and statistically significant, after accounting for sample size, mode and election year. This pattern indicates that polling timing is consistently associated with accuracy. In saying this, the magnitude of the relationship is modest. 
+
+Model 2 introduces the election year, and substantially improves explanatory power. This can be seen from the R squared value increasing from `r round(r2_m1, 3)` to `r round(r2_m2, 3)`. This means that including election year increases the amount of variation that can be explained by the model by approximately `r round(100*(r2_m2 - r2_m1), 3)` percentage points. The estimated coefficient for 2016 is positive and statistically significant (p < 0.001) for models including the predictor. Specifically, the coefficient of `r round(year_beta, 3)` suggests that polls from the 2016 election had approximately `r round(year_beta, 3)` percentage points greater absolute error than polls from the 2012 election, holding timing constant. The estimated coefficient changes throughout the models, but remains statistically significant even after accounting for sample size and polling model in Model 4. These findings suggest that difference between election years is able to explain more variation in polling error than timing alone. 
+
+Models 3 and 4 extend the model by adding sample size and polling mode respectively. The estimated coefficient for log sample size is `r round(size_beta, 3)`, meaning that doubling the number of respondents is associated with approximately `r round(abs(log(2) * size_beta), 3)` percentage points lower absolute error when holding all other predictors constant. On the other hand, polling mode offers minimal additional explanatory value. Relative to polls conducted via phone (reference category), internet polls tend to have approximately `r round(internet_beta, 3)` percentage points greater error, while Mixed/Other polls have `r round(abs(mixed_beta), 3)` percentage points less error. However, neither coefficients appear to be statistically significant at the 5% level, meaning there is not enough evidence of difference in error between the different polling modes and Phone polls after adjusting for other predictors. 
+
+Overall, polling timing, election year, and sample size indicated statistically significant associations with absolute polling error, while polling model did not. While there was improvements from the initial model (Model 1), the final model (Model 4) only explained `r round(100*(r2_m4), 3)`% of the variation in the data, suggesting that majority of the variation remains unexplained by the 4 predictors. Regression diagnostic and assumption checks can be found in @sec-appendix. 
 
 # Statistical appendix {#sec-appendix}
 
@@ -210,8 +269,12 @@ margin_elections <- elections |>
                                      NA_real_)) |> 
     # Election year to be treated as a cateogorical variable for modelling purposes 
     mutate(year = factor(year)) |> 
-    # Polling mode to be treated as a categorical variable for modelling purposes 
-    mutate(mode = factor(mode)) 
+    # Polling mode to be condensed into 3 categories and be treated as categorical variable
+    mutate(mode = case_when(mode %in% c("Automated Phone", "Live Phone", 
+                                        "IVR/Live Phone") ~ "Phone",
+          mode == "Internet" ~ "Internet", 
+          TRUE ~ "Mixed / Other"),
+          mode = factor(mode, levels = c("Phone", "Internet", "Mixed / Other"))) 
   
   # Check model dataset 
   # Check: all polls have distinct state-year-poll ID 
