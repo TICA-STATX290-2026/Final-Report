@@ -100,8 +100,8 @@ The response variable, absolute polling error, calculates the absolute differenc
 
 -   year: election year – either 2012 or 2016
 
-As noted, sample size was logarithmically transformed given there may be a potentially nonlinear relationship with polling error. Additionally, the mode variable was consolidated from 8 categories into 3 groups: Phone, Internet and Mixed/Other. This consolidated reduced the number of different categories with minimal observations, enabling a more effective comparison between polling modes. 
-    
+As noted, sample size was logarithmically transformed given there may be a potentially nonlinear relationship with polling error. Additionally, the mode variable was consolidated from 8 categories into 3 groups: Phone, Internet and Mixed/Other. This consolidated reduced the number of different categories with minimal observations, enabling a more effective comparison between polling modes.
+
 Any observations that were incomplete or had invalid values for the variables required for regression modelling were excluded, enabling consistent samples across all models. The final dataset consists of `r n_obs` observations. The descriptive statistics for this dataset is displayed in @tbl-descriptives. The additional data cleaning and preparation is fully documented in @sec-appendix.
 
 ```{r}
@@ -144,7 +144,7 @@ Model assumptions including linearity, constant variance, and residual normality
 
 # Results {#sec-results}
 
-As displayed in @fig-timing, absolute polling error tends to increase with greater number of days remaining before Election Day. This suggests that polls carried out earlier appear to deviate more from the actual election results. The 2016 polls also indicate greater errors compared to 2012, but there is moderate variation for both election years. These preliminary relationships are further investigated in a formal manner using multiple linear regression, with estimated models showcased in @tbl-model. 
+As displayed in @fig-timing, absolute polling error tends to increase with greater number of days remaining before Election Day. This suggests that polls carried out earlier appear to deviate more from the actual election results. The 2016 polls also indicate greater errors compared to 2012, but there is moderate variation for both election years. These preliminary relationships are further investigated in a formal manner using multiple linear regression, with estimated models showcased in @tbl-model.
 
 ```{r}
 #| label: fig-timing
@@ -196,17 +196,22 @@ modelsummary(
 )
 ```
 
-The regression estimates displayed in @tbl-model offer further evidence of an association between polling timing and absolute polling error. In Model 1, each additional day before the elections is associated with a `r round(timing_beta, 3)` percentage point (`r round(timing_beta, 3)`%) increase in absolute error. Over 100 days, this corresponds to an increase of around `r round(100*timing_beta, 3)` percentage points. Across all four models, the relationship between poll timing and error remains positive and statistically significant, after accounting for sample size, mode and election year. This pattern indicates that polling timing is consistently associated with accuracy. In saying this, the magnitude of the relationship is modest. 
+The regression estimates displayed in @tbl-model offer further evidence of an association between polling timing and absolute polling error. In Model 1, each additional day before the elections is associated with a `r round(timing_beta, 3)` percentage point (`r round(timing_beta, 3)`%) increase in absolute error. Over 100 days, this corresponds to an increase of around `r round(100*timing_beta, 3)` percentage points. Across all four models, the relationship between poll timing and error remains positive and statistically significant, after accounting for sample size, mode and election year. This pattern indicates that polling timing is consistently associated with accuracy. In saying this, the magnitude of the relationship is modest.
 
-Model 2 introduces the election year, and substantially improves explanatory power. This can be seen from the R squared value increasing from `r round(r2_m1, 3)` to `r round(r2_m2, 3)`. This means that including election year increases the amount of variation that can be explained by the model by approximately `r round(100*(r2_m2 - r2_m1), 3)` percentage points. The estimated coefficient for 2016 is positive and statistically significant (p < 0.001) for models including the predictor. Specifically, the coefficient of `r round(year_beta, 3)` suggests that polls from the 2016 election had approximately `r round(year_beta, 3)` percentage points greater absolute error than polls from the 2012 election, holding timing constant. The estimated coefficient changes throughout the models, but remains statistically significant even after accounting for sample size and polling model in Model 4. These findings suggest that difference between election years is able to explain more variation in polling error than timing alone. 
+Model 2 introduces the election year, and substantially improves explanatory power. This can be seen from the R squared value increasing from `r round(r2_m1, 3)` to `r round(r2_m2, 3)`. This means that including election year increases the amount of variation that can be explained by the model by approximately `r round(100*(r2_m2 - r2_m1), 3)` percentage points. The estimated coefficient for 2016 is positive and statistically significant (p \< 0.001) for models including the predictor. Specifically, the coefficient of `r round(year_beta, 3)` suggests that polls from the 2016 election had approximately `r round(year_beta, 3)` percentage points greater absolute error than polls from the 2012 election, holding timing constant. The estimated coefficient changes throughout the models, but remains statistically significant even after accounting for sample size and polling model in Model 4. These findings suggest that difference between election years is able to explain more variation in polling error than timing alone.
 
-Models 3 and 4 extend the model by adding sample size and polling mode respectively. The estimated coefficient for log sample size is `r round(size_beta, 3)`, meaning that doubling the number of respondents is associated with approximately `r round(abs(log(2) * size_beta), 3)` percentage points lower absolute error when holding all other predictors constant. On the other hand, polling mode offers minimal additional explanatory value. Relative to polls conducted via phone (reference category), internet polls tend to have approximately `r round(internet_beta, 3)` percentage points greater error, while Mixed/Other polls have `r round(abs(mixed_beta), 3)` percentage points less error. However, neither coefficients appear to be statistically significant at the 5% level, meaning there is not enough evidence of difference in error between the different polling modes and Phone polls after adjusting for other predictors. 
+Models 3 and 4 extend the model by adding sample size and polling mode respectively. The estimated coefficient for log sample size is `r round(size_beta, 3)`, meaning that doubling the number of respondents is associated with approximately `r round(abs(log(2) * size_beta), 3)` percentage points lower absolute error when holding all other predictors constant. On the other hand, polling mode offers minimal additional explanatory value. Relative to polls conducted via phone (reference category), internet polls tend to have approximately `r round(internet_beta, 3)` percentage points greater error, while Mixed/Other polls have `r round(abs(mixed_beta), 3)` percentage points less error. However, neither coefficients appear to be statistically significant at the 5% level, meaning there is not enough evidence of difference in error between the different polling modes and Phone polls after adjusting for other predictors.
 
-Overall, polling timing, election year, and sample size indicated statistically significant associations with absolute polling error, while polling model did not. While there was improvements from the initial model (Model 1), the final model (Model 4) only explained `r round(100*(r2_m4), 3)`% of the variation in the data, suggesting that majority of the variation remains unexplained by the 4 predictors. Regression diagnostic and assumption checks can be found in @sec-appendix. 
+Overall, polling timing, election year, and sample size indicated statistically significant associations with absolute polling error, while polling model did not. While there was improvements from the initial model (Model 1), the final model (Model 4) only explained `r round(100*(r2_m4), 3)`% of the variation in the data, suggesting that majority of the variation remains unexplained by the 4 predictors. Regression diagnostic and assumption checks can be found in @sec-appendix.
 
 # Statistical appendix {#sec-appendix}
 
-## Data preparation
+This appendix documents the analysis so the results above are fully reproducible.
+The annotated code reproduces the model and its assumption checks; the complete
+project (data, scripts, and commit history) is in the repository linked at the
+top.
+
+## Data preparation {#sec-app-data}
 
 ```{r}
 #| label: appendix-data-preparation
@@ -354,3 +359,72 @@ final_model_data |>
 # Save dataset for regressional analysis in data folder
 write_csv(final_model_data, "data/final_model_data.csv")
 ```
+
+## Model {#sec-app-model}
+
+Four OLS regression models were fitted to explore the association between polling characteristics and absolute polling error. The models progressively included timing, election year, log sample size and polling methodology. The comparison of these estimates can be found in @tbl-model. @tbl-model-detail reports the full fitted Model 4 with 95% confidence intervals.
+
+```{r}
+#| label: tbl-model-detail
+#| tbl-cap: "Detailed OLS estimates for Model 4, exploring absolute polling error in 2012 and 2016 elections. Full regression results with 95% confidence intervals for all coefficients. Reference categories is 2012 (election year) and Phone (polling mode)."
+#| echo: true
+# Report fully adjusted model with 95% CI 
+
+modelsummary(
+  list("Model 4" = model_4),
+  statistic = "conf.int",   # 95% CIs beneath each estimate
+  coef_map  = c(
+    "(Intercept)" = "Intercept",
+    "days_prior" = "Days before Election",
+    "year2016" = "2016 election (vs 2012)",
+    "sample_size_log" = "Log sample size",
+    "modeInternet" = "Internet (vs Phone)",
+    "modeMixed / Other" = "Mixed/Other (vs Phone)"
+  ),
+  gof_map   = c("nobs", "r.squared", "adj.r.squared")
+)
+```
+
+## Assumption checks {#sec-app-checks}
+
+Regression diagnostics were carried out for Model 4 to check the aassumptions of linearity, equal variance and approximate normality of residuals. @fig-diagnostics displays residual against fitted values and the normal Q-Q plot for Model 4. An additional plot inspects any potentially influential observations using a Cook's distance plot. 
+
+```{r}
+#| label: fig-diagnostics
+#| echo: true
+#| fig-cap: "Model 4 diagnostic checks: residual vs fitted values, normal Q-Q plot, and Cook's distance, examining assumptions of the model and any influential observations"
+#| fig-width: 7
+#| fig-height: 10
+
+# Display 3 plots vertically 
+par(mfrow = c(3,1), mar = c(4, 4, 2, 1))
+# Residual vs fitted plot: checking linearity and equal variance
+plot(model_4, which = 1)   
+
+# Normal Q-Q plot: check normality of residuals 
+plot(model_4, which = 2)
+
+# Check potentially influential observations 
+plot(model_4, which = 4)
+```
+
+The diagnostic plots in @fig-diagnostics showcases some deviations from the assumptions of OLS regression. The residual-vs-fitted plot presents a moderately flat smooth trend, but changes in dispersion may indicate heteroskedasticity. Because of this, standard errors and results may become somewhat unreliable. The normal Q-Q plot also showcases substantial deviation from the reference line, especially in the upper tail, suggesting positively-skewed, non-normal residuals. This is unsurprising as the dependent variable is absolute, which is bounded by 0 but can take large positive values. The Cook's distance plot notes a few potentially influential observations, most evidently observation 1289. These results mean that OLS standard errors and significance tests must be interpreted carefully. 
+
+
+## Computational environment {#sec-app-env}
+
+The R version and packages used for the data preparation, regression models, report creation and quality checks are listed in @tbl-environment to ensure reproducibility. The final project, consisting of data sets, R scripts and Quarto source code can be found in the GitHub repository linked at the top. 
+
+```{r}
+#| label: tbl-environment
+#| tbl-cap: "Core software versions used to produce this report."
+#| echo: true
+pkgs <- c("tidyverse", "modelsummary", "knitr", "lintr")
+tibble::tibble(
+  Software = c("R", pkgs),
+  Version  = c(paste(R.version$major, R.version$minor, sep = "."),
+               vapply(pkgs, \(p) as.character(packageVersion(p)), character(1)))
+) |>
+  kable()
+```
+
