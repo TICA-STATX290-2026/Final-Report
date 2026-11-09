@@ -1,5 +1,5 @@
 ---
-title: "A clear, specific title stating what you investigated"
+title: "Factors Associated with State Level Polling Accuracy for 2012 and 2016 US Presidential Elections"
 author:
   - "Tia Light (a1971078)"
   - "Tue Linh Tran (a1983221)"
