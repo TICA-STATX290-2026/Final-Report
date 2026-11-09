@@ -204,6 +204,15 @@ Models 3 and 4 extend the model by adding sample size and polling mode respectiv
 
 Overall, polling timing, election year, and sample size indicated statistically significant associations with absolute polling error, while polling model did not. While there was improvements from the initial model (Model 1), the final model (Model 4) only explained `r round(100*(r2_m4), 3)`% of the variation in the data, suggesting that majority of the variation remains unexplained by the 4 predictors. Regression diagnostic and assumption checks can be found in @sec-appendix.
 
+# References {.unnumbered}
+
+::: {#refs}
+:::
+
+```{=latex}
+\appendix
+```
+
 # Statistical appendix {#sec-appendix}
 
 This appendix documents the analysis so the results above are fully reproducible.
