@@ -19,13 +19,13 @@ format:
     fig-pos: "H"
 bibliography: report-references.bib
 execute:
-  echo: false      # keep code out of the body; it is shown in the appendix
+  echo: false      
   warning: false
   message: false
 editor: source
 ---
 
-**Code and data:** all analysis for this report is reproducible from the repository at <https://github.com/USER/REPO>. <!-- See rubric: Code repository -->
+**Code and data:** all analysis for this report is reproducible from the [GitHub repository.](https://github.com/TICA-STATX290-2026/Final-Report)
 
 ```{r}
 #| label: setup
@@ -206,17 +206,17 @@ Overall, polling timing, election year, and sample size indicated statistically 
 
 # Discussion {#sec-discussion}
 
-This report investigated whether a range of polling characteristics were associated with absolute polling error in the 2012 and 2016 US presidential elections. Overall, the results highlighted that timing, election year, and sample size are statistically significant predictors of absolute error, while methodology has minimal additional explanatory value. However, it is important to note that the final model explains only a modest proportion of variation in the polling error, indicating the limitations of these characteristics. 
+This report investigated whether a range of polling characteristics were associated with absolute polling error in the 2012 and 2016 US presidential elections. Overall, the results highlighted that timing, election year, and sample size are statistically significant predictors of absolute error, while methodology has minimal additional explanatory value. However, it is important to note that the final model explains only a modest proportion of variation in the polling error, indicating the limitations of these characteristics.
 
-The first research question posed an investigation into the relationship between polling timing and error. The findings showed that polls conducted further from Election Day were associated with larger absolute error. This positive relationship was present after adjusting for other polling factors, meaning that timing contributed independently to explaining some variation in polling accuracy. However, this finding does not provide evidence that earlier polls were conducted inaccurately. Voter preferences may shift from the date of polling to Election Day, so earlier polls could have accurately represented public opinion at the time while differing from final election results. Therefore, the outcome measure involves both polling error and changes in voting preferences, a fundamental distinction when interpreting the results.   
+The first research question posed an investigation into the relationship between polling timing and error. The findings showed that polls conducted further from Election Day were associated with larger absolute error. This positive relationship was present after adjusting for other polling factors, meaning that timing contributed independently to explaining some variation in polling accuracy. However, this finding does not provide evidence that earlier polls were conducted inaccurately. Voter preferences may shift from the date of polling to Election Day, so earlier polls could have accurately represented public opinion at the time while differing from final election results. Therefore, the outcome measure involves both polling error and changes in voting preferences, a fundamental distinction when interpreting the results.
 
 The second research question indicated that election year was the strongest characteristic in improving explanatory power of the model. Adding election year increases the R squared value from `r round(r2_m1, 3)` to `r round(r2_m2, 3)`, suggesting that differences between the two election years explains more variation than timing solely. The positive coefficient suggests greater absolute errors in 2016, which is consistent with the American Association for Public Opinion Research's examination of the 2016 election, where @kennedy2018's findings suggest late changes in voter preferences and inadequate weighting for educational attainment as factors contributing to the state-level polling errors. Given those factors were not measured in the analysis, they remain potential explanations, not found causes of the observed election year difference.
 
-Increases in sample sizes were also associated with smaller polling errors, consistent with the expectation that a greater number of respondents will reduce random sampling variability. However, the minimal increase in the R-squared value after implementing sample size into the model indicates that additional explanatory value is limited. Furthermore, sample size alone cannot ensure accuracy if systematic errors such as unrepresentative samples, non response or inappropriate weighting continue to persist. Polling mode was found to be not statistically significant once other predictors were accounted for. This does not necessarily mean that all polling methodologies are equally accurate as the general categories used in the final regression model may hide differences in the poll design and implementation. 
+Increases in sample sizes were also associated with smaller polling errors, consistent with the expectation that a greater number of respondents will reduce random sampling variability. However, the minimal increase in the R-squared value after implementing sample size into the model indicates that additional explanatory value is limited. Furthermore, sample size alone cannot ensure accuracy if systematic errors such as unrepresentative samples, non response or inappropriate weighting continue to persist. Polling mode was found to be not statistically significant once other predictors were accounted for. This does not necessarily mean that all polling methodologies are equally accurate as the general categories used in the final regression model may hide differences in the poll design and implementation.
 
-There are several limitations to be considered when analysing the results. Most evidently, the final model explains only `r round(100*(r2_m4), 3)`% of variation in polling error, meaning that a large proportion of variation remains unexplained from the model. Additionally, there are potentially relevant factors such as demographic weighting, likely-voter models and  state-level political conditions that were not accounted for in the models. Furthermore, observations from the same states could be correlated, potentially violating the assumption of independence. Diagnostic checks conducted in @sec-app-checks suggested possible heteroskedasticity, non-normal residuals and few influential observations, meaning there needs to be cautious interpretation of results. The observational nature of the study further prevents causal interpretations of the estimated relationships while the fact that the analysis focuses on two election years limits generalisability. 
+There are several limitations to be considered when analysing the results. Most evidently, the final model explains only `r round(100*(r2_m4), 3)`% of variation in polling error, meaning that a large proportion of variation remains unexplained from the model. Additionally, there are potentially relevant factors such as demographic weighting, likely-voter models and state-level political conditions that were not accounted for in the models. Furthermore, observations from the same states could be correlated, potentially violating the assumption of independence. Diagnostic checks conducted in @sec-app-checks suggested possible heteroskedasticity, non-normal residuals and few influential observations, meaning there needs to be cautious interpretation of results. The observational nature of the study further prevents causal interpretations of the estimated relationships while the fact that the analysis focuses on two election years limits generalisability.
 
-Overall, the results suggest that election year and polling timing are able to better explain polling error than the broad methodology categories investigated. However, the limited explanatory power of the final model indicates these characteristics alone cannot sufficiently explain differences in polling error. Future studies around polling error and improving electoral forecasting should therefore take into account additional factors such as demographic representativeness, voter turnout and shifts in public opinion. 
+Overall, the results suggest that election year and polling timing are able to better explain polling error than the broad methodology categories investigated. However, the limited explanatory power of the final model indicates these characteristics alone cannot sufficiently explain differences in polling error. Future studies around polling error and improving electoral forecasting should therefore take into account additional factors such as demographic representativeness, voter turnout and shifts in public opinion.
 
 # References {.unnumbered}
 
@@ -229,10 +229,7 @@ Overall, the results suggest that election year and polling timing are able to b
 
 # Statistical appendix {#sec-appendix}
 
-This appendix documents the analysis so the results above are fully reproducible.
-The annotated code reproduces the model and its assumption checks; the complete
-project (data, scripts, and commit history) is in the repository linked at the
-top.
+This appendix documents the analysis so the results above are fully reproducible. The annotated code reproduces the model and its assumption checks; the complete project (data, scripts, and commit history) is in the repository linked at the top.
 
 ## Data preparation {#sec-app-data}
 
@@ -410,7 +407,7 @@ modelsummary(
 
 ## Assumption checks {#sec-app-checks}
 
-Regression diagnostics were carried out for Model 4 to check the aassumptions of linearity, equal variance and approximate normality of residuals. @fig-diagnostics displays residual against fitted values and the normal Q-Q plot for Model 4. An additional plot inspects any potentially influential observations using a Cook's distance plot. 
+Regression diagnostics were carried out for Model 4 to check the aassumptions of linearity, equal variance and approximate normality of residuals. @fig-diagnostics displays residual against fitted values and the normal Q-Q plot for Model 4. An additional plot inspects any potentially influential observations using a Cook's distance plot.
 
 ```{r}
 #| label: fig-diagnostics
@@ -431,12 +428,11 @@ plot(model_4, which = 2)
 plot(model_4, which = 4)
 ```
 
-The diagnostic plots in @fig-diagnostics showcases some deviations from the assumptions of OLS regression. The residual-vs-fitted plot presents a moderately flat smooth trend, but changes in dispersion may indicate heteroskedasticity. Because of this, standard errors and results may become somewhat unreliable. The normal Q-Q plot also showcases substantial deviation from the reference line, especially in the upper tail, suggesting positively-skewed, non-normal residuals. This is unsurprising as the dependent variable is absolute, which is bounded by 0 but can take large positive values. The Cook's distance plot notes a few potentially influential observations, most evidently observation 1289. These results mean that OLS standard errors and significance tests must be interpreted carefully. 
-
+The diagnostic plots in @fig-diagnostics showcases some deviations from the assumptions of OLS regression. The residual-vs-fitted plot presents a moderately flat smooth trend, but changes in dispersion may indicate heteroskedasticity. Because of this, standard errors and results may become somewhat unreliable. The normal Q-Q plot also showcases substantial deviation from the reference line, especially in the upper tail, suggesting positively-skewed, non-normal residuals. This is unsurprising as the dependent variable is absolute, which is bounded by 0 but can take large positive values. The Cook's distance plot notes a few potentially influential observations, most evidently observation 1289. These results mean that OLS standard errors and significance tests must be interpreted carefully.
 
 ## Computational environment {#sec-app-env}
 
-The R version and packages used for the data preparation, regression models, report creation and quality checks are listed in @tbl-environment to ensure reproducibility. The final project, consisting of data sets, R scripts and Quarto source code can be found in the GitHub repository linked at the top. 
+The R version and packages used for the data preparation, regression models, report creation and quality checks are listed in @tbl-environment to ensure reproducibility. The final project, consisting of data sets, R scripts and Quarto source code can be found in the GitHub repository linked at the top.
 
 ```{r}
 #| label: tbl-environment
@@ -450,4 +446,3 @@ tibble::tibble(
 ) |>
   kable()
 ```
-
