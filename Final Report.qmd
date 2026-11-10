@@ -8,9 +8,7 @@ author:
   
 date: today
 abstract: |
-  Executive summary. 4–6 sentences, written for a non-specialist. State the
-  research question, the data, the method, and the key finding, translating any
-  statistics into plain language. Write this last, once the report is complete.
+  Accurate election polling is crucial for perceiving public opinion, yet differences between polling results and election outcomes pose significant questions about what influences polling precision. This report examines how polling timing, election year, sample size and polling method are associated with polling error, utilising 2,436 state-level polls from the US presidential election years 2012 and 2016. Four progressively adjusted linear regression models were fitted to explore such relationships, with polling error defined as the absolute difference between the poll and election's Democratic-Republican vote margins. The findings suggest that polls carried out further from Election Day had larger polling errors, while 2016 polls had roughly 2.45 percentage points greater error than 2012 polls after considering other polling characteristics. Increased sample sizes saw lower errors, while differences between broad polling methodologies were found to be not statistically significant. Given that the final model only explained 10.9% of variation in error, it can be said that timing, election year, and sample size are inadequate in representing polling accuracy, suggesting there is a need to consider other unmeasured factors such as demographic representation and shifts in voter preferences.
 format:
   pdf:
     toc: true
