@@ -104,7 +104,8 @@ Any observations that were incomplete or had invalid values for the variables re
 
 ```{r}
 #| label: tbl-descriptives
-#| tbl-cap: "Descriptive statistics of numerical variables"
+#| tbl-cap: "Descriptive statistics of numerical/categorical variables"
+#| tbl-pos: H
 
 data |>
   summarise(
@@ -156,6 +157,7 @@ As displayed in @fig-timing, absolute polling error tends to increase with great
 #| 2016. The model doesn't account for sample size and polling mode, and
 #| larger errors could possibly indicate changes in voter preferences nearing
 #| election day."
+#| tbl-pos: H
 #| fig-width: 7
 #| fig-height: 4
 ggplot(data, aes(x = days_prior, y = abs_error, colour = year)) +
@@ -174,6 +176,7 @@ ggplot(data, aes(x = days_prior, y = abs_error, colour = year)) +
 #| tbl-cap: "Multiple linear regression exploring association between polling
 #| characteristics and absolute polling error for 2012 and 2016 US
 #| presidential elections."
+#| tbl-pos: H
 # modelsummary's default `tinytable` backend renders cleanly to PDF.
 
 modelsummary(
@@ -385,6 +388,7 @@ Four OLS regression models were fitted to explore the association between pollin
 ```{r}
 #| label: tbl-model-detail
 #| tbl-cap: "Detailed OLS estimates for Model 4, exploring absolute polling error in 2012 and 2016 elections. Full regression results with 95% confidence intervals for all coefficients. Reference categories is 2012 (election year) and Phone (polling mode)."
+#| tbl-pos: H
 #| echo: true
 # Report fully adjusted model with 95% CI 
 
@@ -409,6 +413,7 @@ Regression diagnostics were carried out for Model 4 to check the aassumptions of
 
 ```{r}
 #| label: fig-diagnostics
+#| tbl-pos: H
 #| echo: true
 #| fig-cap: "Model 4 diagnostic checks: residual vs fitted values, normal Q-Q plot, and Cook's distance, examining assumptions of the model and any influential observations"
 #| fig-width: 7
