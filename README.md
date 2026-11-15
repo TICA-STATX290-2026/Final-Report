@@ -36,7 +36,7 @@ For this report, the three data sets were combined and prepared using final_data
 
 ## Research Questions 
 
-The analysis investigates the research question: **To what degree are polling timing, sample size and methodology associated with the accuracy of state-level presidential polls for the 2012 and 2016 elections.** More specifically, it explores:
+The analysis investigates the research question: **To what degree are polling timing, election year, sample size and methodology associated with the accuracy of state-level presidential polls for the 2012 and 2016 elections.** More specifically, it explores:
 
 1\. Whether polling accuracy is associated with days prior to Election Day
 
