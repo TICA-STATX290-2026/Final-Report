@@ -278,7 +278,8 @@ polls_2016_wide <- polls_2016 |>
 # Combine both election year polling data
 polls_2012_2016 <- bind_rows(polls_2012_wide, polls_2016_wide) |>
   # Keep columns necessary for modelling
-  select(year, state, poll_id, pollster, end_date, start_date, mode, sample_size, margin_poll)
+  select(year, state, poll_id, pollster, end_date, start_date, 
+         mode, sample_size, margin_poll)
 
 # Check number of polls for each year after combining datasets
 polls_2012_2016 |>
@@ -288,7 +289,8 @@ polls_2012_2016 |>
 # Keep election results for only 2012 and 2016, Dem and Rep parties
 margin_elections <- elections |>
   filter(year %in% c(2012, 2016)) |>
-  # Sum votes across all Rep candidate records and then across all Dem candidate records
+  # Sum votes across all Rep candidate records and then across all
+  # Dem candidate records
   group_by(year, state) |>
   summarise(
     votes_rep = sum(candidatevotes[party_simplified == "REPUBLICAN"],
@@ -393,15 +395,18 @@ Four OLS regression models were fitted to explore the association between pollin
 
 ```{r}
 #| label: tbl-model-detail
-#| tbl-cap: "Detailed OLS estimates for Model 4, exploring absolute polling error in 2012 and 2016 elections. Full regression results with 95% confidence intervals for all coefficients. Reference categories is 2012 (election year) and Phone (polling mode)."
+#| tbl-cap: "Detailed OLS estimates for Model 4, exploring absolute polling
+#| error in 2012 and 2016 elections. Full regression results with 95% confidence
+#| intervals for all coefficients. Reference categories is 2012 (election year)
+#| and Phone (polling mode)."
 #| tbl-pos: H
 #| echo: true
-# Report fully adjusted model with 95% CI 
+# Report fully adjusted model with 95% CI
 
 modelsummary(
   list("Model 4" = model_4),
-  statistic = "conf.int",   # 95% CIs beneath each estimate
-  coef_map  = c(
+  statistic = "conf.int", # 95% CIs beneath each estimate
+  coef_map = c(
     "(Intercept)" = "Intercept",
     "days_prior" = "Days before Election",
     "year2016" = "2016 election (vs 2012)",
@@ -409,7 +414,7 @@ modelsummary(
     "modeInternet" = "Internet (vs Phone)",
     "modeMixed / Other" = "Mixed/Other (vs Phone)"
   ),
-  gof_map   = c("nobs", "r.squared", "adj.r.squared")
+  gof_map = c("nobs", "r.squared", "adj.r.squared")
 )
 ```
 
@@ -421,19 +426,21 @@ Regression diagnostics were carried out for Model 4 to check the aassumptions of
 #| label: fig-diagnostics
 #| tbl-pos: H
 #| echo: true
-#| fig-cap: "Model 4 diagnostic checks: residual vs fitted values, normal Q-Q plot, and Cook's distance, examining assumptions of the model and any influential observations"
+#| fig-cap: "Model 4 diagnostic checks: residual vs fitted values, normal Q-Q
+#| plot, and Cook's distance, examining assumptions of the model and any
+#| influential observations"
 #| fig-width: 7
 #| fig-height: 10
 
-# Display 3 plots vertically 
-par(mfrow = c(3,1), mar = c(4, 4, 2, 1))
+# Display 3 plots vertically
+par(mfrow = c(3, 1), mar = c(4, 4, 2, 1))
 # Residual vs fitted plot: checking linearity and equal variance
-plot(model_4, which = 1)   
+plot(model_4, which = 1)
 
-# Normal Q-Q plot: check normality of residuals 
+# Normal Q-Q plot: check normality of residuals
 plot(model_4, which = 2)
 
-# Check potentially influential observations 
+# Check potentially influential observations
 plot(model_4, which = 4)
 ```
 
@@ -450,8 +457,10 @@ The R version and packages used for the data preparation, regression models, rep
 pkgs <- c("tidyverse", "modelsummary", "knitr", "lintr")
 tibble::tibble(
   Software = c("R", pkgs),
-  Version  = c(paste(R.version$major, R.version$minor, sep = "."),
-               vapply(pkgs, \(p) as.character(packageVersion(p)), character(1)))
+  Version = c(
+    paste(R.version$major, R.version$minor, sep = "."),
+    vapply(pkgs, \(p) as.character(packageVersion(p)), character(1))
+  )
 ) |>
   kable()
 ```
