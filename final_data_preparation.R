@@ -105,6 +105,25 @@ model_data <- polls_and_elections |>
     mode = factor(mode, levels = c("Phone", "Internet", "Mixed / Other"))
   )
 
+# Audit the sample before observations are excluded
+sample_audit <- model_data |>
+  group_by(year) |>
+  summarise(
+    before_filter = n(),
+    excluded_bad_size = sum(is.na(sample_size_log)),
+    retained = sum(!is.na(sample_size_log)),
+    .groups = "drop"
+  )
+
+# Each observation must be either excluded or retained
+stopifnot(all(
+  sample_audit$before_filter ==
+    sample_audit$excluded_bad_size + sample_audit$retained
+))
+
+# Save the results for quarto report
+write_csv(sample_audit, "data/sample_audit.csv")
+
 
 # Check model dataset
 # Check: all polls have distinct state-year-poll ID

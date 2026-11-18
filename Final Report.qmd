@@ -64,6 +64,23 @@ mixed_beta <- coef(model_4)[["modeMixed / Other"]]
 r2_m4 <- summary(model_4)$r.squared
 
 n_obs <- nrow(data)
+
+# Read the sample audit created by final_data_preparation.R
+sample_audit <- read_csv(
+  "data/sample_audit.csv",
+  show_col_types = FALSE
+)
+
+# Confirm that the audit agrees with the model dataset
+stopifnot(sum(sample_audit$retained) == n_obs)
+
+# Check that all four models use the complete dataset
+model_counts <- sapply(
+  list(model_1, model_2, model_3, model_4),
+  nobs
+)
+
+stopifnot(all(model_counts == n_obs))
 ```
 
 # Introduction {#sec-intro}
@@ -100,7 +117,7 @@ The response variable, absolute polling error, calculates the absolute differenc
 
 As noted, sample size was logarithmically transformed given there may be a potentially nonlinear relationship with polling error. Additionally, the mode variable was consolidated from 8 categories into 3 groups: Phone, Internet and Mixed/Other. This consolidation reduced the number of different categories with minimal observations, enabling a more effective comparison between polling modes.
 
-Any observations that were incomplete or had invalid values for the variables required for regression modelling were excluded, enabling consistent samples across all models. The final dataset consists of `r n_obs` observations. The descriptive statistics for this dataset is displayed in @tbl-descriptives. The distribution of polling methodology across the election years can be found in @tbl-distribution. Additional data cleaning and preparation is fully documented in @sec-appendix.
+Polls with missing or nonpositive sample sizes were excluded because their log transformed sample sizes could not be used in the regression models. Of the `r sum(sample_audit$before_filter)` polls available before this exclusion, `r sum(sample_audit$excluded_bad_size)` were excluded and `r sum(sample_audit$retained)` were retained for analysis. The remaining observations were checked for invalid values in the regression variables, and all four models were verified to use the same analytical sample. The sample selection counts by election year are reported in @tbl-sample-audit. The final dataset consists of `r n_obs` observations. The descriptive statistics for this dataset is displayed in @tbl-descriptives. The distribution of polling methodology across the election years can be found in @tbl-distribution. Additional data cleaning and preparation is fully documented in @sec-appendix.
 
 ```{r}
 #| label: tbl-descriptives
@@ -202,6 +219,55 @@ modelsummary(
   stars = TRUE
 )
 ```
+
+```{r}
+#| label: tbl-model4-effects
+#| tbl-cap: "Adjusted changes in absolute polling error (percentage points) for selected comparisons in 2012 and 2016 US state-level polls, calculated from Model 4. Positive estimates indicate greater error. Intervals are conventional OLS 95% confidence intervals."
+#| tbl-pos: H
+
+# Select coefficients from the regression
+terms <- c(
+  "days_prior",
+  "sample_size_log",
+  "year2016"
+)
+
+# Coefficients to comparisons with
+# 30 days earlier, doubling sample size, and 2016 vs 2012
+multipliers <- c(30, log(2), 1)
+
+# Get coefficient estimates and confidence intervals
+b <- coef(model_4)[terms]
+ci <- confint(model_4, parm = terms, level = 0.95)
+
+# Compare model coefficients
+effect_table <- tibble(
+  Comparison = c(
+    "Poll conducted 30 days earlier",
+    "Doubling the sample size",
+    "2016 compared with 2012"
+  ),
+  Estimate = unname(b) * multipliers,
+  Lower = ci[terms, 1] * multipliers,
+  Upper = ci[terms, 2] * multipliers
+)
+
+# Turn raw estimates to a table
+effect_table |>
+  knitr::kable(
+    digits = 2,
+    col.names = c(
+      "Comparison",
+      "Estimate (pp)",
+      "95% CI lower",
+      "95% CI upper"
+    )
+  )
+```
+
+To make the regression coefficients easier for interpretation, @tbl-model4-effects presents selected practical comparisons from the fully adjusted model. Polls conducted 30 days earlier were associated with 0.20 percentage points greater absolute error (95% CI: 0.15 to 0.26), while doubling sample size was associated with 0.45 percentage points lower error (95% CI: 0.21 to 0.68 lower), holding other predictors constant.
+
+These estimates represent adjusted associations rather than causal effects. Because diagnostics indicated potential heteroskedasticity, the conventional OLS confidence intervals should be interpreted with caution.
 
 The regression estimates displayed in @tbl-model offer further evidence of an association between polling timing and absolute polling error. In Model 1, each additional day before the elections is associated with a `r round(timing_beta, 3)` percentage point increase in absolute error. Based on the unrounded coefficient, this corresponds to an increase of around `r round(100*timing_beta, 3)` percentage points over 100 days. Across all four models, the relationship between poll timing and error remains positive and statistically significant, after accounting for sample size, mode and election year. This pattern indicates that polling timing is consistently associated with accuracy. In saying this, the magnitude of the relationship is modest.
 
@@ -388,6 +454,27 @@ final_model_data |>
 # Save dataset for regressional analysis in data folder
 write_csv(final_model_data, "data/final_model_data.csv")
 ```
+
+The analytical sample was checked to document the exclusion of polls without valid sample size information. Table @tbl-sample-audit summarises this process separately for the 2012 and 2016 election datasets.
+
+```{r}
+#| label: tbl-sample-audit
+#| tbl-cap: "Sample-selection audit for 2012 and 2016 US state-level polling data. Polls without valid sample sizes were excluded; the retained observations form the regression dataset."
+#| tbl-pos: H
+
+sample_audit |>
+  knitr::kable(
+    col.names = c(
+      "Election year",
+      "Before filtering",
+      "Excluded",
+      "Retained"
+    ),
+    align = c("l", "r", "r", "r")
+  )
+```
+
+The audit reflects the sample size exclusion used to construct the modelling dataset. Validation of the remaining regression variables was also performed before model fitting.
 
 ## Model {#sec-app-model}
 
