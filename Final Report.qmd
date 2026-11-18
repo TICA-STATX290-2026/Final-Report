@@ -162,7 +162,7 @@ Model 1 investigates the association between polling time and absolute error. Mo
 
 In these models, election year and polling mode were treated as categorical variables, with 2012 and Phone as the respective reference categories. The coefficients of the models were interpreted as changes in expected absolute polling error (in percentage points), accounting for other predictors included in the given model.
 
-Model assumptions including linearity, constant variance, and residual normality were assessed through residual versus fitted and normal Q-Q plots. Additionally, influential observations were also investigated using standard regression diagnostics. Potential dependence between polls from the same state or pollster was considered a possible limitation of the assumption of independence. The analysis remains observational, meaning any relationships should not be considered as causal. Detailed model specifications, diagnostics, and R code is fully documented and can be found in @sec-appendix.
+Model assumptions including linearity, constant variance, and residual normality were assessed through residual versus fitted and normal Q-Q plots. Additionally, influential observations were also investigated using standard regression diagnostics. Potential dependence between polls from the same state or pollster was considered a possible limitation of the assumption of independence. Multicollinearity between predictors was assessed using variance inflation factors (@tbl-vif). The analysis remains observational, meaning any relationships should not be considered as causal. Detailed model specifications, diagnostics, and R code is fully documented and can be found in @sec-appendix, with software versions listed in @tbl-environment.
 
 # Results {#sec-results}
 
@@ -533,6 +533,24 @@ plot(model_4, which = 4)
 
 The diagnostic plots in @fig-diagnostics showcases some deviations from the assumptions of OLS regression. The residual-vs-fitted plot presents a moderately flat smooth trend, but changes in dispersion may indicate heteroskedasticity. Because of this, standard errors and results may become somewhat unreliable. The normal Q-Q plot also showcases substantial deviation from the reference line, especially in the upper tail, suggesting positively-skewed, non-normal residuals. The Cook's distance plot notes a few potentially influential observations, most evidently observation 1289. These results mean that OLS standard errors and significance tests must be interpreted carefully.
 
+Multicollinearity was assessed using variance inflation factors (VIF), shown in @tbl-vif, with values above 5 indicating a potential problem. As polling mode has more than one dummy variable, `car::vif()` reports a generalised VIF for it, and the adjusted value (last column) is compared on the same scale as the other predictors.
+
+```{r}
+#| label: tbl-vif
+#| tbl-cap: "Variance inflation factors for Model 4 predictors."
+#| tbl-pos: H
+#| echo: true
+# Check multicollinearity between predictors
+car::vif(model_4) |>
+  as.data.frame() |>
+  rownames_to_column("Predictor") |>
+  kable(
+    digits = 2,
+    col.names = c("Predictor", "VIF", "Df", "Adjusted VIF")
+  )
+```
+
+All VIF values are close to 1, with the largest being 1.40 for polling mode, well below the threshold of 5. This indicates that multicollinearity is unlikely to distort the individual coefficient estimates, despite the overlap between polling mode and election year shown in @tbl-distribution.
 ## Computational environment {#sec-app-env}
 
 The R version and packages used for the data preparation, regression models, report creation and quality checks are listed in @tbl-environment to ensure reproducibility. The final project, consisting of data sets, R scripts and Quarto source code can be found in the GitHub repository linked at the top.
@@ -541,7 +559,7 @@ The R version and packages used for the data preparation, regression models, rep
 #| label: tbl-environment
 #| tbl-cap: "Core software versions used to produce this report."
 #| echo: true
-pkgs <- c("tidyverse", "modelsummary", "knitr", "lintr")
+pkgs <- c("tidyverse", "modelsummary", "knitr", "car", "lintr")
 tibble::tibble(
   Software = c("R", pkgs),
   Version = c(
