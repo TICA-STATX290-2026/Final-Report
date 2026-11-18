@@ -507,7 +507,7 @@ modelsummary(
 
 ## Assumption checks {#sec-app-checks}
 
-Regression diagnostics were carried out for Model 4 to check the aassumptions of linearity, equal variance and approximate normality of residuals. @fig-diagnostics displays residual against fitted values and the normal Q-Q plot for Model 4. An additional plot inspects any potentially influential observations using a Cook's distance plot.
+Regression diagnostics were carried out for Model 4 to check the assumptions of linearity, equal variance and approximate normality of residuals. @fig-diagnostics displays residual against fitted values and the normal Q-Q plot for Model 4. An additional plot inspects any potentially influential observations using a Cook's distance plot.
 
 ```{r}
 #| label: fig-diagnostics
