@@ -10,13 +10,14 @@ This analysis utilises 2,436 state-level polls and four progressively adjusted O
 Final-Report/
 ├── README.md                           <- this file 
 ├── Final Report.qmd                    <- Report source 
-├── Final-Report.pdf                    <- Rendered final report
+├── Final-Report2.pdf                    <- Rendered final report
 ├── final_data_preparation.R            <-  Data preparation script
 ├── report-references.bib               <- References 
 └── data/
     ├── 1976-2024-president-clean.csv   <- Cleaned election results
     ├── state_polls_2012_clean.csv      <- Cleaned 2012 polling data
     ├── state_polls_2016_clean.csv      <- Cleaned 2016 polling data
+    ├── sample_audit.csv                <- Analytical sample selection counts
     └── final_model_data.csv            <- Final report dataset 
 ```
 
