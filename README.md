@@ -57,7 +57,7 @@ Ensure the following tools and software are installed before running the project
 
 Run this command in your R console to install the required packages:
 
-`install.packages(c("tidyverse", "modelsummary", "knitr"))`
+`install.packages(c("tidyverse", "modelsummary", "knitr", "car"))`
 
 For code quality checks, user can also install lintr package:
 
