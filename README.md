@@ -10,7 +10,7 @@ This analysis utilises 2,436 state-level polls and four progressively adjusted O
 Final-Report/
 ├── README.md                           <- this file 
 ├── Final Report.qmd                    <- Report source 
-├── Final-Report2.pdf                    <- Rendered final report
+├── Final Report.pdf                    <- Rendered final report
 ├── final_data_preparation.R            <-  Data preparation script
 ├── report-references.bib               <- References 
 └── data/
