@@ -389,7 +389,8 @@ model_data <- polls_and_elections |>
     end_date = as.Date(end_date)
   ) |>
   # Add column for election date for the corresponding year
-  mutate(election_date = as.Date(if_else(year == 2016, "2016-11-08", "2012-11-06"))) |>
+  mutate(election_date = as.Date(if_else(year == 2016, "2016-11-08",
+                                         "2012-11-06"))) |>
   # Create column with number of days between poll and election
   mutate(days_prior = as.numeric(as.numeric(election_date - end_date))) |>
   # Create column with absolute polling error
@@ -399,9 +400,11 @@ model_data <- polls_and_elections |>
     log(sample_size),
     NA_real_
   )) |>
-  # Election year to be treated as a cateogorical variable for modelling purposes
+  # Election year to be treated as a cateogorical variable for 
+  # modelling purposes
   mutate(year = factor(year)) |>
-  # Polling mode to be condensed into 3 categories and be treated as categorical variable
+  # Polling mode to be condensed into 3 categories and be treated as 
+  # categorical variable
   mutate(
     mode = case_when(
       mode %in% c(
@@ -433,7 +436,8 @@ model_data |>
   count(year, mode)
 
 # Construct final dataset for models
-# Keep observations with no missing values (remove observations with missing sample size)
+# Keep observations with no missing values 
+# (remove observations with missing sample size)
 final_model_data <- model_data |>
   filter(!is.na(sample_size_log))
 # Check final number of polls for each year
