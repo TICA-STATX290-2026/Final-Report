@@ -15,6 +15,7 @@ format:
     number-sections: true
     documentclass: scrartcl
     fig-pos: "H"
+output-file: "Final Report.pdf"
 bibliography: report-references.bib
 execute:
   echo: false      
