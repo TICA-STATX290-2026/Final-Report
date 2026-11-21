@@ -11,7 +11,7 @@ Final-Report/
 ├── README.md                           <- this file 
 ├── Final Report.qmd                    <- Report source 
 ├── Final Report.pdf                    <- Rendered final report
-├── final_data_preparation.R            <-  Data preparation script
+├── final_data_preparation.R            <- Data preparation script
 ├── report-references.bib               <- References 
 └── data/
     ├── 1976-2024-president-clean.csv   <- Cleaned election results
