@@ -309,7 +309,9 @@ This appendix documents the analysis so the results above are fully reproducible
 
 ```{r}
 #| label: appendix-data-preparation
-#| echo: true
+#| echo: false
+#| warning: false
+#| message: false
 #| eval: false
 
 library(readr)
@@ -466,6 +468,7 @@ The analytical sample was checked to document the exclusion of polls without val
 #| label: tbl-sample-audit
 #| tbl-cap: "Sample-selection audit for 2012 and 2016 US state-level polling data. Polls without valid sample sizes were excluded; the retained observations form the regression dataset."
 #| tbl-pos: H
+#| echo: false
 
 sample_audit |>
   knitr::kable(
@@ -492,7 +495,7 @@ Four OLS regression models were fitted to explore the association between pollin
 #| intervals for all coefficients. Reference categories is 2012 (election year)
 #| and Phone (polling mode)."
 #| tbl-pos: H
-#| echo: true
+#| echo: false
 # Report fully adjusted model with 95% CI
 
 modelsummary(
@@ -517,7 +520,7 @@ Regression diagnostics were carried out for Model 4 to check the assumptions of 
 ```{r}
 #| label: fig-diagnostics
 #| tbl-pos: H
-#| echo: true
+#| echo: false
 #| fig-cap: "Model 4 diagnostic checks: residual vs fitted values, normal Q-Q
 #| plot, and Cook's distance, examining assumptions of the model and any
 #| influential observations"
@@ -544,7 +547,7 @@ Multicollinearity was assessed using variance inflation factors (VIF), shown in 
 #| label: tbl-vif
 #| tbl-cap: "Variance inflation factors for Model 4 predictors."
 #| tbl-pos: H
-#| echo: true
+#| echo: false
 # Check multicollinearity between predictors
 car::vif(model_4) |>
   as.data.frame() |>
@@ -563,7 +566,7 @@ The R version and packages used for the data preparation, regression models, rep
 ```{r}
 #| label: tbl-environment
 #| tbl-cap: "Core software versions used to produce this report."
-#| echo: true
+#| echo: false
 pkgs <- c("tidyverse", "modelsummary", "knitr", "car", "lintr")
 tibble::tibble(
   Software = c("R", pkgs),
