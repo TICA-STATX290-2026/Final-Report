@@ -562,13 +562,13 @@ All VIF values are close to 1, with the largest being 1.40 for polling mode, wel
 
 ## Computational environment {#sec-app-env}
 
-The R version and packages used for the data preparation, regression models, report creation and quality checks are listed in @tbl-environment to ensure reproducibility. The final project, consisting of data sets, R scripts and Quarto source code can be found in the GitHub repository linked at the top.
+The R version and packages used for the data preparation, regression models and report creation are listed in @tbl-environment to ensure reproducibility. The final project, consisting of data sets, R scripts and Quarto source code can be found in the GitHub repository linked at the top.
 
 ```{r}
 #| label: tbl-environment
 #| tbl-cap: "Core software versions used to produce this report."
 #| echo: false
-pkgs <- c("tidyverse", "modelsummary", "knitr", "car", "lintr")
+pkgs <- c("tidyverse", "modelsummary", "knitr", "car")
 tibble::tibble(
   Software = c("R", pkgs),
   Version = c(
