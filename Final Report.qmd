@@ -460,7 +460,7 @@ final_model_data |>
 write_csv(final_model_data, "data/final_model_data.csv")
 ```
 
-The analytical sample was checked to document the exclusion of polls without valid sample size information. Table @tbl-sample-audit summarises this process separately for the 2012 and 2016 election datasets.
+The analytical sample was checked to document the exclusion of polls without valid sample size information. @tbl-sample-audit summarises this process separately for the 2012 and 2016 election datasets.
 
 ```{r}
 #| label: tbl-sample-audit
