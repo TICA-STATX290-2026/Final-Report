@@ -266,7 +266,7 @@ effect_table |>
   )
 ```
 
-To make the regression coefficients easier for interpretation, @tbl-model4-effects presents selected practical comparisons from the fully adjusted model. Polls conducted 30 days earlier were associated with 0.20 percentage points greater absolute error (95% CI: 0.15 to 0.26), while doubling sample size was associated with 0.45 percentage points lower error (95% CI: 0.21 to 0.68 lower), holding other predictors constant.
+To make the regression coefficients easier for interpretation, @tbl-model4-effects presents selected practical comparisons from the fully adjusted model. Polls conducted 30 days earlier were associated with 0.20 percentage points greater absolute error (95% CI: 0.15 to 0.26), while doubling sample size was associated with 0.45 percentage points lower error (95% CI: 0.21 to 0.68 lower), Full Model 4 estimates with 95% confidence intervals are reported in @tbl-model-detail.
 
 These estimates represent adjusted associations rather than causal effects. Because diagnostics indicated potential heteroskedasticity, the conventional OLS confidence intervals should be interpreted with caution.
 
