@@ -59,10 +59,6 @@ Run this command in your R console to install the required packages:
 
 `install.packages(c("tidyverse", "modelsummary", "knitr", "car"))`
 
-For code quality checks, user can also install lintr package:
-
-`install.packages("lintr")`
-
 If TinyTeX has not already been installed, do so in the RStudio Terminal:
 
 `quarto install tinytex`
