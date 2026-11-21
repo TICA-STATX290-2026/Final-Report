@@ -73,13 +73,13 @@ To reproduce the project, the below steps must be followed in order:
 
 2.  Launch RStudio and open the cloned repository folder.
 
-3.  Run final_data_preparation.R to reproduce final_model_data.csv from the three EDA data sets.
+3.  Run final_data_preparation.R to reproduce final_model_data.csv from the three EDA data sets. Can also run the sample_audit.csv file which records the number of observations before and after the data preparation. 
 
 4.  Render the Final Report.qmd file to generate the pdf report:
 
 -   In RStudio, open Final Report.qmd and click the "Render" button.
 
-All regression models, tables and figures are produced through executable R code within the qmd file. The final report is available as Final-Report.pdf.
+All regression models, tables and figures are produced through executable R code within the qmd file. The final report is available as Final Report.pdf.
 
 ## Statistical Analysis 
 
