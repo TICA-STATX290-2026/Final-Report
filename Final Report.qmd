@@ -118,7 +118,7 @@ The response variable, absolute polling error, calculates the absolute differenc
 
 As noted, sample size was logarithmically transformed given there may be a potentially nonlinear relationship with polling error. Additionally, the mode variable was consolidated from 8 categories into 3 groups: Phone, Internet and Mixed/Other. This consolidation reduced the number of different categories with minimal observations, enabling a more effective comparison between polling modes.
 
-Polls with missing or nonpositive sample sizes were excluded because their log transformed sample sizes could not be used in the regression models. Of the `r sum(sample_audit$before_filter)` polls available before this exclusion, `r sum(sample_audit$excluded_bad_size)` were excluded and `r sum(sample_audit$retained)` were retained for analysis. The remaining observations were checked for invalid values in the regression variables, and all four models were verified to use the same analytical sample. The sample selection counts by election year are reported in @tbl-sample-audit. The final dataset consists of `r n_obs` observations. The descriptive statistics for this dataset is displayed in @tbl-descriptives. The distribution of polling methodology across the election years can be found in @tbl-distribution. Additional data cleaning and preparation is fully documented in @sec-appendix.
+Polls with missing or nonpositive sample sizes were excluded because their log transformed sample sizes could not be used in the regression models. Of the `r sum(sample_audit$before_filter)` polls available before this exclusion, `r sum(sample_audit$excluded_bad_size)` were excluded and `r sum(sample_audit$retained)` were retained for analysis. The remaining observations were checked for invalid values in the regression variables, and all four models were verified to use the same analytical sample. The sample selection counts by election year are reported in @tbl-sample-audit. The final dataset consists of `r n_obs` observations. The descriptive statistics for this dataset is displayed in @tbl-descriptives. The distribution of polling methodology across the election years can be found in @tbl-distribution. Additional data cleaning and preparation including R scripts are fully documented in the [GitHub repository](https://github.com/TICA-STATX290-2026/Final-Report).
 
 ```{r}
 #| label: tbl-descriptives
@@ -163,7 +163,7 @@ Model 1 investigates the association between polling time and absolute error. Mo
 
 In these models, election year and polling mode were treated as categorical variables, with 2012 and Phone as the respective reference categories. The coefficients of the models were interpreted as changes in expected absolute polling error (in percentage points), accounting for other predictors included in the given model.
 
-Model assumptions including linearity, constant variance, and residual normality were assessed through residual versus fitted and normal Q-Q plots. Additionally, influential observations were also investigated using standard regression diagnostics. Potential dependence between polls from the same state or pollster was considered a possible limitation of the assumption of independence. Multicollinearity between predictors was assessed using variance inflation factors (@tbl-vif). The analysis remains observational, meaning any relationships should not be considered as causal. Detailed model specifications, diagnostics, and R code is fully documented and can be found in @sec-appendix, with software versions listed in @tbl-environment.
+Model assumptions including linearity, constant variance, and residual normality were assessed through residual versus fitted and normal Q-Q plots. Additionally, influential observations were also investigated using standard regression diagnostics. Potential dependence between polls from the same state or pollster was considered a possible limitation of the assumption of independence. Multicollinearity between predictors was assessed using variance inflation factors (@tbl-vif). The analysis remains observational, meaning any relationships should not be considered as causal. Accompanying regression results and diagnostic checks can be found in @sec-appendix, with software versions listed in @tbl-environment. The complete R code used for this is located in the [GitHub repository](https://github.com/TICA-STATX290-2026/Final-Report). 
 
 # Results {#sec-results}
 
@@ -303,9 +303,9 @@ Overall, the results suggest that election year, polling timing and sample size 
 
 # Statistical appendix {#sec-appendix}
 
-This appendix documents the analysis so the results above are fully reproducible. The annotated code reproduces the model and its assumption checks; the complete project (data, scripts, and commit history) is in the repository linked at the top.
+This appendix includes supporting statistical information, providing sample-selection details, regression estimates, diagnostic checks and computational environment. The complete project (data, scripts, and commit history) used to produce the analysis is in the repository linked at the top.
 
-## Data preparation {#sec-app-data}
+## Sample selection and validation {#sec-app-data}
 
 ```{r}
 #| label: appendix-data-preparation
@@ -462,7 +462,7 @@ final_model_data |>
 write_csv(final_model_data, "data/final_model_data.csv")
 ```
 
-The analytical sample was checked to document the exclusion of polls without valid sample size information. @tbl-sample-audit summarises this process separately for the 2012 and 2016 election datasets.
+The analytical sample was checked to document the exclusion of polls without valid sample size information. @tbl-sample-audit summarises this process separately for the 2012 and 2016 election datasets. Complete data preparation and R scripts are available in the [GitHub repository](https://github.com/TICA-STATX290-2026/Final-Report). 
 
 ```{r}
 #| label: tbl-sample-audit
